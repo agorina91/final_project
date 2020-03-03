@@ -1,14 +1,15 @@
+import pandas as pd
+import pickle
+import plotly.graph_objects as go
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
+from dash.dependencies import Output, Input
+from navbar import Navbar
 import base64
-
-import pandas as pd
 import numpy as np
 import re
-from sklearn.externals import joblib
-import matplotlib.pyplot as plt
 
 image_filename = 'pink_flowers.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
@@ -16,6 +17,19 @@ encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 df = pd.read_csv('skindataall.csv', index_col=[0])
 
 nav = Navbar()
+
+colors = {
+    'background': '#FAEBD7',
+    'text': '#111111'
+}
+
+header = html.H4(children='Skincare Recommendations',
+        style={
+            'textAlign': 'center',
+            'color': colors['text'],
+            'backgroundColor': colors['background']
+        }
+)
 
 def dicts(df, colname):
     vals = list(set(df[colname]))
@@ -32,7 +46,7 @@ types_dict = dicts(df, 'Skin_Type')
 eyes_dict = dicts(df, 'Eye_Color')
 hair_dict = dicts(df, 'Hair_Color')
 
-#products_dict = dicts(df, 'Product')
+
 
 def Table(df):
     rows = []
@@ -55,79 +69,36 @@ def Table(df):
         # Header
         [html.Tr([html.Th(col) for col in ['Rating', 'Product']])] + rows
         )
+
 markdown_text = '''
 Based on your features, these are the top products for you:
 '''
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+dropdown1 = html.Div(dcc.Dropdown(
+    id='skintone-selector',
+    options=tones_dict,
+    placeholder='Select your skin tone'
+))
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+dropdown2 = html.Div(dcc.Dropdown(
+    id='skintype-selector',
+    options=types_dict,
+    placeholder='Select your skin type'
+))
 
-colors = {
-    'background': '#FAEBD7',
-    'text': '#111111'
-}
+dropdown3 = html.Div(dcc.Dropdown(
+    id='eyecolor-selector',
+    options=eyes_dict,
+    placeholder='Select your eye color'
+))
 
-app.layout = html.Div(nav,
-    style={'backgroundColor': colors['background']}, children=[
-    html.H4(children='Skincare Recommendations',
-			style={
-				'textAlign': 'center',
-				'color': colors['text'],
-				'backgroundColor': colors['background']
-			}
-	),
+dropdown4 = html.Div(dcc.Dropdown(
+    id='haircolor-selector',
+    options=hair_dict,
+    placeholder='Select your eye color'
+))
 
-
-	html.Img(
-		src='data:image/png;base64,{}'.format(encoded_image.decode()),
-		style={
-			'height': '50%',
-			'width': '50%'
-			#'textAlign': 'center'
-		}),
-
-
-	html.Label('Skin Tone'),
-    dcc.Dropdown(
-		id='skintone-selector',
-        options=tones_dict,
-		placeholder='Select your skin tone'
-    ),
-
-	html.Label('Skin Type'),
-    dcc.Dropdown(
-		id='skintype-selector',
-        options=types_dict,
-        placeholder='Select your skin type'
-    ),
-
-	html.Label('Eye color'),
-    dcc.Dropdown(
-		id='eyecolor-selector',
-		options=eyes_dict,
-        placeholder='Select your eye color'
-    ),
-
-	html.Label('Hair color'),
-    dcc.Dropdown(
-		id='haircolor-selector',
-        options=hair_dict,
-        placeholder='Select your eye color'
-    ),
-
-    #html.Label('Your favorite product!'),
-    #dcc.Dropdown(
-	#	id='product-selector',
-    #    options=products_dict,
-	#	placeholder='Select your favorite product'
-    #),
-
-	markdown_text,
-
-    html.Div(id='output')
-
-])
+output = html.Div(id='output')
 
 @app.callback(
 	Output('output', 'children'),
@@ -145,13 +116,19 @@ def recommend_products_by_user_features(skintone, skintype, eyecolor, haircolor)
     data = data.sort_values('Rating_Stars', ascending=False).head()
 
     return Table(data)
-    #return html.Table(
-    #    [html.Tr([html.Th(col) for col in data.columns])] +
-    #    [html.Tr([
-    #        html.Td(data.iloc[i][col]) for col in data.columns
-    #    ]) for i in range(min(len(data), 10))]
-    #)
 
+
+def App11():
+    layout = html.Div([
+        nav,
+        header,
+        dropdown1,
+        dropdown2,
+        dropdown3,
+        dropdown4,
+        output
+    ])
+    return layout
 
 if __name__ == '__main__':
     app.run_server(debug=True)

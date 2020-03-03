@@ -32,6 +32,11 @@ mf_model = runMF(interactions = interaction_matrix,
                  epoch = 30,
                  n_jobs = 4)
 
+import pickle
+
+with open('mf_model.pkl', 'wb') as f:
+    pickle.dump(mf_model, f)
+
 def create_user_dict(interactions):
     user_id = list(interactions.index)
     user_dict = {}
@@ -62,31 +67,35 @@ def sample_recommendation_user(model, interactions, user_id, user_dict,
 
     known_items = list(pd.Series(interactions.loc[user_id,:] \
                                  [interactions.loc[user_id,:] > threshold].index).sort_values(ascending=False))
-    print(scores)
+    #print(scores)
     scores = [x for x in scores if x not in known_items]
     return_score_list = scores[0:nrec_items]
-    print(return_score_list)
+    #print(return_score_list)
     known_items = list(pd.Series(known_items).apply(lambda x: item_dict[x]))
     scores = list(pd.Series(return_score_list).apply(lambda x: item_dict[x]))
-    if show == True:
-        print("Since you like:")
-        counter = 1
-        for i in known_items:
-            print(str(counter) + '- ' + i)
-            counter+=1
 
-        print("\n Recommended Items:")
-        counter = 1
-        for i in scores:
-            print(str(counter) + '- ' + i)
-            counter+=1
-    return return_score_list
+    if show == True:
+        print(scores)
+    #     print("Since you like:")
+    #     counter = 1
+    #     for i in known_items:
+    #         print(str(counter) + '- ' + i)
+    #         counter+=1
+    # 
+    #     print("\n Recommended Items:")
+    #     counter = 1
+    #     for i in scores:
+    #         print(str(counter) + '- ' + i)
+    #         counter+=1
+    return scores #return_score_list, scores
 
 rec_list = sample_recommendation_user(model = mf_model,
                                       interactions = interaction_matrix,
-                                      user_id = 4792,
+                                      user_id = 3582,
                                       user_dict = user_dict,
                                       item_dict = product_dict,
                                       threshold = 4,
                                       nrec_items = 10,
                                       show = True)
+
+type(rec_list)
