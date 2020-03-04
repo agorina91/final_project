@@ -27,8 +27,8 @@ from lightfm.evaluation import precision_at_k, recall_at_k
 
 import pickle
 
-image_filename = 'skimage.png'
-encoded_image = base64.b64encode(open(image_filename, 'rb').read())
+#image_filename = 'skimage.png'
+#encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 df = pd.read_csv('skindataall.csv', index_col=[0])
 
@@ -138,10 +138,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-# colors = {
-#     'background': '#F0F8FF',
-#     'text': '#111111'
-# }
+
 
 colors = {
     #'background': '#1DB954',
@@ -160,15 +157,6 @@ app.layout = html.Div(style=colors, children=[
 			}
 	),
 
-
-	# html.Div(className='center-block',
-    #     children=html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),
-	# 	style={
-    #         'margin-left': 'auto',
-    #         'margin-right': 'auto',
-	# 		'height': '50%',
-	# 		'width': '50%'
-	# 	})),
 
         dcc.Markdown(children=intro_text),
 
