@@ -1,4 +1,4 @@
-# Skincare recommendations
+# Skincare recommendations ::::
 
 For the final project I decided to build a recommendation system. I have worked with **Sephora** website before, both as a data scientist and as a regular customer, so I am familiar with the structure of their data and posess some domain knowledge. As far as I know, at the moment Sephora doesn't have a sophisticated recommender: they allow users to filter products based on the notes from the manufacturer. For example, a user can go to the ['beauty quiz'](https://www.sephora.com/beauty/foundation-finder) page, select one of the options (foundation, toner, moisturizer, etc.), specify some details, and get filtered results. However, there is no ingredient analysis behind this algorithm, and no user feature analysis. 
 
